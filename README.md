@@ -49,39 +49,9 @@ Dataset Characteristics:
 
 Match-level, player-level, club-level, and event-level tables
 
-Numerous missing values requiring extensive cleaning and reconstruction
+ER DIAGRAM
+<img width="1186" height="936" alt="Screenshot 2025-12-07 at 12 14 17 AM" src="https://github.com/user-attachments/assets/947f72f6-b751-4ef9-8d18-a88617254ad4" />
 
-Repository Structure
-.
-├── data/
-│   ├── raw/                      # Original Kaggle-sourced CSVs
-│   ├── cleaned/                  # Cleaned BigQuery tables (games, clubs, players)
-│
-├── sql/
-│   ├── cleaning/
-│   │   ├── clean_games.sql
-│   │   ├── clean_clubs.sql
-│   │   ├── clean_players.sql
-│   │   └── clean_club_games.sql
-│   ├── transformations/
-│   │   ├── v_season_ranges.sql
-│   │   ├── v_player_valuation_latest.sql
-│   │   ├── v_club_season_performance.sql
-│   │   ├── v_club_squad_value.sql
-│   │   └── views_age_position_discipline.sql
-│   └── analysis/
-│       ├── finance_vs_performance.sql
-│       ├── squad_age_vs_winpct.sql
-│       ├── discipline_vs_results.sql
-│
-├── notebooks/
-│   └── A10-Beyond-the-Pitch.ipynb   # Full pipeline and analysis
-│
-├── visuals/
-│   ├── EDA_plots/
-│   ├── Tableau_screenshots/
-│
-└── README.md
 
 Data Cleaning Summary
 
