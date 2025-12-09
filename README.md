@@ -174,7 +174,7 @@ https://public.tableau.com/app/profile/gurveen.rekhi/viz/A10Assignment2/Story1?p
 
 ## Dashboards include:
 
-EDA snapshots
+### EDA snapshots
 
 Positional market value differences
 
