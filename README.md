@@ -1,211 +1,238 @@
 # Beyond-the-Pitch---Quantifying-Success-in-Modern-Football
 # TEAM 10 - Kush Vyas, Gurveen Rekhi, Shi Qiu, Yu-Chien Chen, Yashaswini Reddy, Xiaoxuan Zhu
 
-This project aims to uncover the key drivers of football club success by analyzing how financial power, squad structure, and on-field discipline shape season-level performance. By integrating global match, player, and valuation data through BigQuery and SQL, we aim to explain why some clubs consistently outperform others.
+Overview
 
-📌 Overview
+This project investigates what drives football club success by integrating financial, tactical, and disciplinary data into a unified analytical framework. Using BigQuery, SQL, and multi-table datasets sourced from the Transfermarkt repository (via Kaggle), we examine whether clubs win more because they spend more, build balanced squads, or maintain superior discipline on the pitch.
 
-This project analyzes what drives football club success by integrating financial metrics, squad composition, and disciplinary behavior into a unified analytical pipeline. Using Google BigQuery, SQL, and Tableau, we transform 100k+ football records from Transfermarkt into actionable season-level insights.
+The workflow includes extensive data cleaning, entity consolidation, season-level aggregation, and exploratory analysis across millions of match, player, and valuation records.
 
-📂 Repository Structure
-.
-├── data/
-│   ├── raw/                     # Kaggle raw files
-│   └── cleaned/                 # BigQuery-cleaned tables
-│
-├── sql/
-│   ├── cleaning/                # Data cleaning scripts
-│   ├── transformations/         # Views and helper tables
-│   └── analysis/                # Analytical SQL queries
-│
-├── notebooks/
-│   └── Beyond-the-Pitch.ipynb   # Full pipeline notebook
-│
-├── visuals/
-│   ├── EDA_plots/
-│   └── Tableau_screenshots/
-│
-└── README.md
+Objectives
 
-🧠 Project Objectives
+The project focuses on three core pillars:
+
 1. Financial Strength
 
-Build season-level squad market values
+Squad market value by club × season
 
-Measure correlation between squad value and win percentage
+Transfer expenditure influence
 
-Identify overperforming low-budget clubs
+Correlation between valuation and win percentage
+
+Identification of financially efficient overperformers
 
 2. Squad Composition
 
-Minutes-weighted age profiles
+Age structure of squads (minutes-weighted and unweighted)
 
-Positional minutes and goal contribution shares
+Positional distribution of minutes and goals
 
-Tactical effectiveness based on squad balance
+Tactical dependencies (e.g., midfield-heavy vs forward-driven offenses)
 
-3. Discipline & Competition
+3. Discipline & Competition Context
 
-Yellow/red card accumulation per club per season
+Yellow/red card accumulation by season and competition
 
 League-level disciplinary intensity
 
-Evaluate whether aggressive play hurts win rates
+Relationship between cards and win rates
 
-📊 Key Findings
-Financials
+Data Sources
+
+Primary dataset:
+Transfermarkt Global Player and Match Data
+Kaggle link: https://www.kaggle.com/datasets/davidcariboo/player-scores
+
+Dataset Characteristics:
+
+555 MB, 100k+ records, 133 columns across 10 source files
+
+Match-level, player-level, club-level, and event-level tables
+
+Numerous missing values requiring extensive cleaning and reconstruction
+
+Repository Structure
+.
+├── data/
+│   ├── raw/                      # Original Kaggle-sourced CSVs
+│   ├── cleaned/                  # Cleaned BigQuery tables (games, clubs, players)
+│
+├── sql/
+│   ├── cleaning/
+│   │   ├── clean_games.sql
+│   │   ├── clean_clubs.sql
+│   │   ├── clean_players.sql
+│   │   └── clean_club_games.sql
+│   ├── transformations/
+│   │   ├── v_season_ranges.sql
+│   │   ├── v_player_valuation_latest.sql
+│   │   ├── v_club_season_performance.sql
+│   │   ├── v_club_squad_value.sql
+│   │   └── views_age_position_discipline.sql
+│   └── analysis/
+│       ├── finance_vs_performance.sql
+│       ├── squad_age_vs_winpct.sql
+│       ├── discipline_vs_results.sql
+│
+├── notebooks/
+│   └── A10-Beyond-the-Pitch.ipynb   # Full pipeline and analysis
+│
+├── visuals/
+│   ├── EDA_plots/
+│   ├── Tableau_screenshots/
+│
+└── README.md
+
+Data Cleaning Summary
+
+Extensive preprocessing was required due to high missingness, redundancy, and schema inconsistencies across tables.
+
+Games Table
+
+Dropped: match-day positions, attendance, formations, referees, URLs
+
+Removed rows with missing identifiers (game_id, clubs, goals)
+
+Result: 74,014 validated match records
+
+Clubs Table
+
+Recomputed foreigners_percentage from available fields
+
+Removed rows with missing primary identifiers
+
+Result: 439 clubs with complete attributes
+
+Club Games Table
+
+Removed rows missing club_ids or goal data
+
+Result: 148,028 records
+
+Players Table
+
+Removed metadata (first_name/last_name, URLs, images, contracts)
+
+Imputed: height, market values, date of birth
+
+Standardized unknown position/foot to categorical "Unknown"
+
+Result: 32,601 players cleaned
+
+Key Analytical Views
+
+v_season_date_ranges: Season start/end boundaries
+
+v_player_season_latest_value: Latest valuation per player × season
+
+v_club_squad_value_by_season: Aggregated squad market values
+
+v_club_season_performance: Win rate, goals, matches by season
+
+club_season_age_stats: Minutes-weighted age composition
+
+club_season_pos_stats: Positional minutes and goal shares
+
+club_season_card_metrics: Season-level discipline summaries
+
+These views feed all downstream insight generation.
+
+Major Findings
+1. Financial Strength Matters—but Weakly
 
 Overall correlation between squad value and win percentage ≈ 0.23
 
-Strong but not deterministic relationship
+High-value clubs typically win more, but variance is large
 
-Several clubs outperform despite extremely low squad values (< €5M)
+Several clubs outperform their spending dramatically (win_pct ≈ 0.85 with < €5M squads)
 
-Squad Structure
+Insight: Financial power offers an advantage, but tactical efficiency and development can rival spending.
 
-Performance improves when minutes concentrate in the 23–31 age range
+2. Squad Composition Drives Tactical Outcomes
 
-Clubs relying on defenders/midfielders for goal scoring have lower win consistency
+Minutes-weighted age around 23–31 correlates with stronger results
 
-Discipline
+U23-heavy squads underperform unless minutes are well balanced
 
-High card accumulation correlates with lower win %
+When forwards contribute fewer goals, win percentages flatten even if overall goal differences remain positive
 
-League refereeing intensity varies significantly
+Insight: Balanced positional output—particularly from forwards—is more impactful than average age alone.
 
-🗃️ Data Sources
+3. Discipline Influences Club Outcomes
 
-Primary: Transfermarkt global dataset (Kaggle)
-Link: https://www.kaggle.com/datasets/davidcariboo/player-scores
+High yellow/red card counts correlate with lower win rates
 
-Dataset details:
+Aggressive teams often face momentum loss due to red cards
 
-555 MB
+League-level averages show significant variation in competitiveness and officiating intensity
 
-10 files
+Insight: Clubs that maintain discipline tend to outperform those with high card accumulation.
 
-133 columns, 100k+ rows
+Visualization Dashboard
 
-Players, clubs, match results, appearances, valuations
-
-🛠️ Technologies
-
-Google BigQuery (core processing)
-
-SQL (Standard SQL)
-
-Python + Colab
-
-Tableau Public
-
-Kaggle Datasets
-
-🔧 Data Cleaning Summary
-
-Extensive preprocessing across four major tables:
-
-Games
-
-Removed irrelevant/empty columns
-
-Removed rows missing core identifiers
-
-Final: 74,014 valid games
-
-Clubs
-
-Rebuilt foreigners_percentage
-
-Dropped irrelevant info
-
-Final: 439 clubs
-
-Club Games
-
-Removed rows missing club IDs or goal data
-
-Final: 148,028 rows
-
-Players
-
-Dropped metadata columns
-
-Imputed height, market value, and birthdates
-
-Standardized missing categorical attributes
-
-Final: 32,601 players
-
-🏗️ Core SQL Views
-
-v_season_date_ranges
-
-v_player_season_latest_value
-
-v_club_squad_value_by_season
-
-v_club_season_performance
-
-club_season_age_stats
-
-club_season_pos_stats
-
-club_season_card_metrics
-
-These views feed all major analysis.
-
-📈 Visualization Dashboard
-
-Tableau Story:
+Tableau Story Link:
 https://public.tableau.com/app/profile/gurveen.rekhi/viz/A10Assignment2/Story1?publish=yes
 
-Includes:
+Dashboards include:
 
-Initial EDA
+EDA snapshots
 
-Market value by position
+Positional market value differences
 
-Squad structure vs win%
+Squad composition vs performance
 
-Discipline across leagues and seasons
+Discipline metrics across seasons
 
-▶️ How to Reproduce
-1. Import data
+Technologies Used
 
-Download from Kaggle and upload raw CSVs into BigQuery.
+Google BigQuery for SQL transformations and large-scale processing
 
-2. Run cleaning scripts
+Colab / Python for orchestration and documentation
 
-Execute SQL files in /sql/cleaning using BigQuery.
+Tableau Public for visualization
 
-3. Generate analytical views
+Kaggle datasets as raw input
 
-Run scripts in /sql/transformations.
+How to Reproduce
 
-4. Execute analysis queries
+Clone this repository
 
-Run /sql/analysis or open the Colab notebook.
+Create a BigQuery project and dataset
 
-5. Visualize
+Upload raw CSVs to BigQuery
 
-Use cleaned tables in Tableau Public.
+Run SQL scripts in the /sql/cleaning folder in the following order:
 
-⚠️ Limitations
+clean_games.sql
 
-Missing or inconsistent Transfermarkt fields
+clean_clubs.sql
 
-Market values fluctuate heavily mid-season
+clean_players.sql
 
-Card counts vary based on referee/league style
+clean_club_games.sql
 
-Lack of tactical formation or xG data
+Execute transformation and analysis views
 
-🚀 Future Work
+Run the notebook A10-Beyond-the-Pitch.ipynb
 
-Integrate xG/xA advanced metrics
+Optionally import clean tables into Tableau for visualization
 
-Add wage-bill and net-spend analysis
+Limitations
 
-Build ML model to predict league finish
+Missing or inconsistent Transfermarkt data imposes structural bias
 
-League-adjusted competitiveness metrics
+Market values fluctuate mid-season and may not fully represent player contributions
+
+Red/yellow card interpretation may vary by league and referee
+
+Dataset does not include tactical formation-level events
+
+Future Improvements
+
+Incorporate player-level event data (pressure, shots, xG, xA)
+
+Add financial expenditures and wage-bill analysis
+
+Model team efficiency using regression or ML-based approaches
+
+Introduce league-adjusted normalization for cross-region comparability
