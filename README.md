@@ -218,3 +218,20 @@ Our project creates practical value for teams by showing how squad age, player r
 Coaches and managers can optimize lineups, recruitment teams can make smarter transfer decisions, and executives can measure return on investment. Analytics teams gain a repeatable framework for evaluating performance, while fans and media get clearer explanations of why clubs succeed. 
 
 Overall, the project turns raw data into actionable insights that support better decisions on and off the field.
+
+## How to Run the Notebook
+1) Download data  
+   - Use Kaggle API: `kaggle datasets download davidcariboo/player-scores` (unzips to CSVs used in the notebook).
+2) Load into BigQuery  
+   - Create datasets/tables for games, clubs, club_games, players, player_valuations, etc.  
+   - Schema can be inferred on load; ensure primary keys (club_id, player_id) remain intact.
+3) Authenticate  
+   - In Colab: run the provided BigQuery auth cell.  
+   - Local Jupyter: set `GOOGLE_APPLICATION_CREDENTIALS=/path/to/key.json`.
+4) Open the notebook  
+   - Run cells in order. Early cells install/import libraries and initialize BigQuery client.  
+   - Cleaning steps drop high-missingness columns, recompute derived fields (e.g., `foreigners_percentage`), and remove unusable rows.
+5) Reproduce analysis  
+   - Execute question blocks sequentially (Financial, Squad Composition, Discipline, Global Trends).  
+   - Visualization cells generate plots for squad value vs. win%, efficient clubs, age/position splits, card intensity, and valuation trends.
+
